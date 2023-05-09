@@ -1,10 +1,12 @@
-from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from .models import Post
 
 class PostList(ListView):
     model = Post
     ordering = '-pk'
+
+class PostDetail(DetailView):
+    model = Post
 
 # Create your views here.
 # FBV(함수로 직접 지정해 주는 방법) 방식으로 만들어 본 거임
@@ -24,7 +26,7 @@ def single_post_page(request, pk):
 
     return render(
         request,
-        'board/single_post_page.html',
+        'board/post_detail.html',
         {
             'post': post,
         }
