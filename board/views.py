@@ -1,19 +1,23 @@
 from django.shortcuts import render
+from django.views.generic import ListView
 from .models import Post
 
+class PostList(ListView):
+    model = Post
+    ordering = '-pk'
 
 # Create your views here.
-
-def index(request):
-    posts = Post.objects.all().order_by('-pk')
-
-    return render(
-        request,
-        'board/index.html',
-        {
-            'posts': posts,
-        }
-    )
+# FBV(함수로 직접 지정해 주는 방법) 방식으로 만들어 본 거임
+# def index(request):
+#     posts = Post.objects.all().order_by('-pk')
+# 
+#     return render(
+#         request,
+#         'board/post_list.html',
+#         {
+#             'posts': posts,
+#         }
+#     )
 
 def single_post_page(request, pk):
     post = Post.objects.get(pk=pk)
