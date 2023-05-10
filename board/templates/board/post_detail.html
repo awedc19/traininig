@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{% static 'board/bootstrap/bootstrap.min.css' %}"
           media="screen">
     <link rel="stylesheet" href="{% static 'board/css/styles.css' %}" media="screen"/>
+    <script src="https://kit.fontawesome.com/ed9cf5b694.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- Responsive navbar-->
@@ -58,12 +59,29 @@
                 <figure class="mb-4">
                     <img class="img-fluid rounded" src="{{ post.head_image.url }}" alt="{{ post.title }} head_image"/>
                     {% else %}
-                    <img class="img-fluid rounded" src="https://picsum.photos/seed/{{ p.id }}/800/300" alt="random_image">
+                    <img class="img-fluid rounded" src="https://picsum.photos/seed/{{ p.id }}/800/300"
+                         alt="random_image">
                     {% endif %}
                 </figure>
                 <!-- Post content-->
                 <section class="mb-5">
                     <p class="fs-5 mb-4">{{ post.content }}</p>
+
+                    {% if post.file_upload %}
+                    <a href="{{ post.file_upload.url }}" class="btn btn-outline-dark" role="button">
+                        Download :
+                        {% if post.get_file_ext == 'CSV' %}
+                            <i class="fa-solid fa-file-csv"></i>
+                        {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
+                            <i class="fa-solid fa-file-excel"></i>
+                        {% elif post.get_file_ext == 'docx' or post.get_file_ext == 'doc' %}
+                            <i class="fa-solid fa-file-doc"></i>
+                        {% else %}
+                            <i class="fa-solid fa-file-lines"></i>
+                        {% endif %}
+                        {{ post.get_file_name }}
+                    </a>
+                    {% endif %}
                 </section>
             </article>
             <!-- Comments section-->
