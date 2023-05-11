@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup
+from django.contrib.auth.models import User
 from .models import Post
 
 
@@ -8,6 +9,8 @@ from .models import Post
 class TestView(TestCase):
     def setUp(self):
         self.client = Client()
+        self.user_trump = User.objects.create_user(username='trump', password='somepassword')
+        self.user_obama = User.objects.create_user(username='obama', password='somepassword')
 
     def navbar_test(self, soup):
         navbar = soup.nav
@@ -43,14 +46,19 @@ class TestView(TestCase):
         main_area = soup.find('div', id='main-area')
         self.assertIn('아직 게시물이 없습니다.', main_area.text)
 
+        self.assertIn(self.user_trump.username.upper(), main_area.text)
+        self.assertIn(self.user_obama.username.upper(), main_area.text)
+
         # 3.1 게시물이 2개 있다면
         post_01 = Post.objects.create(
             title='첫 번째 게시물 입니다.',
             content='Hello World. We are the World.',
+            author=self.user_trump
         )
         post_02 = Post.objects.create(
             title='두 번째 게시물 입니다.',
             content='1등이 전부는 아니잖아요?',
+            author=self.user_obama
         )
         self.assertEqual(Post.objects.count(), 2)
 
@@ -71,6 +79,7 @@ def test_post_detail(self):
     post_01 = Post.objects.create(
         title='첫 번째 게시물 입니다.',
         content='Hello World. We are the World',
+        author = self.user_trump,
     )
 
     # 1.2 그 게시물의 url은 '/board/1/'이다.
@@ -93,7 +102,7 @@ def test_post_detail(self):
     self.assertIn(post_01.title, post_area.text)
 
     # 2.5 첫 번째 게시물의 작성자(author)가 게시물 영억에 있다(아직 구현할 수 없음)
-    # 아직 작성 불가
+    self.assertIn(self.user_trump.username.upper(), post_area.text)
 
     # 2.6 첫 번째 게시물의 내용(content)이 포스트 영역에 있다.
     self.assertIn(post_01.content, post_area.text)
